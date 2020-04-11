@@ -1,6 +1,6 @@
 # Implementation Todo tasks list
 
-Provides an implementation of Todo tasks web application.
+Provides a web application to manage Todo tasks.
 
 Technologies
 * Kotlin/JS
@@ -10,4 +10,4 @@ Technologies
 
 To run the project execute:
 
-<code>./gradlew run --continous</code>
+<code>./gradlew run --continuous</code>
