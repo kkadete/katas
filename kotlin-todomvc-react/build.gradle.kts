@@ -1,5 +1,7 @@
 import org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.DevServer
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackOutput.Target.COMMONJS
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.DEVELOPMENT
 
 buildscript {
     repositories {
@@ -25,7 +27,7 @@ repositories {
 }
 
 configurations.all {
-    if(isProductionBuild) {
+    if (isProductionBuild) {
         resolutionStrategy {
             failOnVersionConflict()
             failOnDynamicVersions()
@@ -44,10 +46,12 @@ dependencies {
 
     implementation(npm("react", "16.13.0"))
     implementation(npm("react-dom", "16.13.0"))
+
+    implementation(npm("html-webpack-plugin"))
 }
 
 tasks {
-    named<Wrapper>("wrapper"){
+    named<Wrapper>("wrapper") {
         gradleVersion = project.property("gradle-wrapper.version") as String
         distributionType = ALL
     }
@@ -84,6 +88,11 @@ kotlin {
             }
             runTask {
                 outputFileName = "main.bundle.js"
+                devServer = DevServer(
+                    open = true,
+                    port = 3000,
+                    contentBase = listOf("$buildDir/processedResources/Js/main")
+                )
             }
         }
     }
