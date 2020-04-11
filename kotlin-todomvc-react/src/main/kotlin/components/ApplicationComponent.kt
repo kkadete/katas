@@ -1,15 +1,41 @@
 package katas.todomvc.components
 
+import katas.todomvc.container.addTodoComponent
+import katas.todomvc.container.visibleTodoListComponent
 import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
+import react.dom.br
+import react.dom.div
 import react.dom.h1
+import react.router.dom.browserRouter
+import react.router.dom.navLink
+import react.router.dom.route
+import react.router.dom.switch
 
-class ApplicationComponent : RComponent<RProps, RState>() {
-    override fun RBuilder.render() {
-        h1 {
-            +"TODO"
+private const val TODO_LIST_PATH = "/todolist"
+
+fun RBuilder.application() =
+    browserRouter {
+        switch {
+            route("/", exact = true) {
+                div {
+                    h1 {
+                        +"Kotlin React + React-Dom + Redux + React-Redux + React-Router Example"
+                    }
+                    navLink(TODO_LIST_PATH) {
+                        +"Go to todo list"
+                    }
+                }
+            }
+            route(TODO_LIST_PATH) {
+                div {
+                    addTodoComponent {}
+                    visibleTodoListComponent {}
+                    footer()
+                    br {}
+                    navLink("/") {
+                        +"Go back"
+                    }
+                }
+            }
         }
     }
-}

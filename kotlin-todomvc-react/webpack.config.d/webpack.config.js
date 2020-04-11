@@ -2,7 +2,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 config.plugins.push(new HtmlWebpackPlugin({
     inject: true,
-    template: "../../../processedResources/js/main/index.template.html",
+    template: "../../../processedResources/Js/main/index.template.html",
 }));
 
 config.module.rules.push({
