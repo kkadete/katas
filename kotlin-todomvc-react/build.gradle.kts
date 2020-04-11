@@ -99,6 +99,9 @@ kotlin {
                     useChromeHeadless()
                 }
             }
+            distribution {
+                directory = File("${buildDir}/distribution/")
+            }
         }
     }
 }
