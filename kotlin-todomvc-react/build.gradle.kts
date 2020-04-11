@@ -1,6 +1,8 @@
 import org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.DevServer
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackOutput.Target.COMMONJS
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.DEVELOPMENT
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.PRODUCTION
 
 buildscript {
     repositories {
@@ -89,7 +91,8 @@ kotlin {
             }
             runTask {
                 outputFileName = "main.bundle.js"
-
+                mode = if (isProductionBuild) DEVELOPMENT else PRODUCTION
+                report = true
                 devServer = DevServer(
                     open = true,
                     port = 3000,
