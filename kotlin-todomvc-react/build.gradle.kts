@@ -62,6 +62,15 @@ tasks {
 
 kotlin {
     sourceSets {
+        all {
+            languageSettings.apply {
+                apiVersion = "1.3"
+                languageVersion = "1.3"
+                enableLanguageFeature("InlineClasses")
+                useExperimentalAnnotation("kotlin.ExperimentalUnsignedTypes")
+                progressiveMode = true
+            }
+        }
         named("main") {
             resources.srcDir(webDir)
         }
