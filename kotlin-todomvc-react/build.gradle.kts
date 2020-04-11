@@ -1,6 +1,6 @@
 import org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.DevServer
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackOutput.Target.COMMONJS
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackOutput.Target.UMD
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.PRODUCTION
 
@@ -79,7 +79,7 @@ kotlin {
                 kotlinOptions {
                     friendModulesDisabled = false
                     metaInfo = true
-                    moduleKind = COMMONJS
+                    moduleKind = UMD
                     main = "call"
                     sourceMap = !isProductionBuild
                     if (!isProductionBuild) {
@@ -92,12 +92,15 @@ kotlin {
             runTask {
                 outputFileName = "main.bundle.js"
                 mode = if (isProductionBuild) DEVELOPMENT else PRODUCTION
+                output.libraryTarget = UMD
                 report = true
                 devServer = DevServer(
                     open = true,
                     port = 3000,
                     contentBase = listOf("$buildDir/processedResources/Js/main")
                 )
+            }
+            dceTask {
             }
             testTask {
                 enabled = true
