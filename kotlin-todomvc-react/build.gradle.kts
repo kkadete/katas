@@ -46,7 +46,9 @@ dependencies {
     implementation(npm("react", "16.13.0"))
     implementation(npm("react-dom", "16.13.0"))
 
-    implementation(npm("html-webpack-plugin"))
+    implementation(npm("html-webpack-plugin", "4.2.0"))
+    implementation(npm("style-loader", "1.1.3"))
+    implementation(npm("css-loader", "3.5.2"))
 }
 
 tasks {
@@ -87,6 +89,7 @@ kotlin {
             }
             runTask {
                 outputFileName = "main.bundle.js"
+
                 devServer = DevServer(
                     open = true,
                     port = 3000,
@@ -105,3 +108,4 @@ kotlin {
         }
     }
 }
+
