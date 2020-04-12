@@ -8,7 +8,7 @@ import react.RBuilder
 import styled.css
 import styled.styledLi
 
-fun RBuilder.todo(todo: Todo, onClick: () -> Unit) =
+fun RBuilder.todoComponent(todo: Todo, onClick: () -> Unit) =
     styledLi {
         attrs.onClickFunction = { onClick() }
         css {

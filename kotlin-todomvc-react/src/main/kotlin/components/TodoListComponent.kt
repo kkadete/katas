@@ -15,7 +15,7 @@ interface TodoListProps : RProps {
 class TodoListComponent(props: TodoListProps) : RComponent<TodoListProps, RState>(props) {
     override fun RBuilder.render() {
         ul {
-            props.todos.forEach { todo(it) { props.toggleTodo(it.id) } }
+            props.todos.forEach { todoComponent(it) { props.toggleTodo(it.id) } }
         }
     }
 }
