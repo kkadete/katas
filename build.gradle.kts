@@ -2,12 +2,12 @@ import org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 
 tasks {
     register("clean"){
-        description = "Build all katas"
+        description = "Clean all katas"
         dependsOn(gradle.includedBuilds.map{ it.task(":clean") })
     }
 
     register("assemble"){
-        description = "Build all katas"
+        description = "Assemble all katas"
         dependsOn(gradle.includedBuilds.map{ it.task(":assemble") })
     }
 
