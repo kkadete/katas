@@ -5,3 +5,4 @@ const val ESCAPE_KEY = 27;
 if (event is KeyboardEvent && event.keyCode == ENTER_KEY) {
 - Injecting CSS in the index.html not working
 https://youtrack.jetbrains.com/issue/KT-32721
+- use of devDependencies instead of dependencies

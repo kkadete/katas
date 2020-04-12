@@ -21,7 +21,7 @@ group = "katas.todomvc"
 version = "1.0-SNAPSHOT"
 
 val webDir = file("src/main/web")
-val isProductionBuild = project.extra.get("production") as Boolean
+val isProductionBuild = extra.get("production") as Boolean
 
 repositories {
     jcenter()
@@ -31,7 +31,8 @@ repositories {
 configurations.all {
     if (isProductionBuild) {
         resolutionStrategy {
-            failOnVersionConflict()
+            // TODO: different kotlin version
+            // failOnVersionConflict()
             failOnDynamicVersions()
             failOnChangingVersions()
             failOnNonReproducibleResolution()
