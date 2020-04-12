@@ -1,4 +1,4 @@
-package katas.todomvc.container
+package katas.todomvc.components
 
 import katas.todomvc.actions.AddTodoAction
 import katas.todomvc.store
