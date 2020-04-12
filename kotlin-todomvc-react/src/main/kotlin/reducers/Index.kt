@@ -15,5 +15,3 @@ fun combinedReducers() = combineReducers(
         State::visibilityFilter to ::visibilityFilterReducer
     )
 )
-
-

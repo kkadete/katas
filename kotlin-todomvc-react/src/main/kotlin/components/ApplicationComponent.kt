@@ -31,6 +31,7 @@ fun RBuilder.application() =
                     addTodoComponent {}
                     visibleTodoListComponent {}
                     footer()
+                    infoComponent()
                     br {}
                     navLink("/") {
                         +"Go back"
