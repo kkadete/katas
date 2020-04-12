@@ -24,7 +24,7 @@ fun main() {
     // https://youtrack.jetbrains.com/issue/KT-32721
     requireAll(require.context("../../../../processedResources/js/main/", true, js("/\\.css$/")))
 
-    val rootDiv = document.getElementById("application")
+    val rootDiv = document.getElementById("root")
     render(rootDiv) {
         provider(store) {
             application()

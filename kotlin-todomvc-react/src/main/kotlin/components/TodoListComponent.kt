@@ -1,28 +1,96 @@
 package katas.todomvc.components
 
+import katas.todomvc.actions.ToggleAllTodosAction
 import katas.todomvc.domain.Todo
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
-import react.dom.div
+import katas.todomvc.domain.Visibility
+import katas.todomvc.reducers.State
+import kotlinx.html.InputType
+import kotlinx.html.id
+import kotlinx.html.js.onClickFunction
+import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.events.Event
+import react.*
+import react.dom.input
+import react.dom.label
+import react.dom.section
 import react.dom.ul
+import react.redux.rConnect
+import redux.RAction
+import redux.WrapperAction
 
-interface TodoListProps : RProps {
-    var todos: Array<Todo>
-    var toggleTodo: (Int) -> Unit
-}
+interface TodoListProps : OwnTodoListPros, TodoListStateProps, TodoListDispatchProps
 
 class TodoListComponent(props: TodoListProps) : RComponent<TodoListProps, RState>(props) {
+    private val inputRef = createRef<HTMLInputElement>()
+
+    private val handleToogleAll: (Event) -> Unit = { event ->
+        val target: dynamic = event.target.asDynamic()
+        val checked = target.checked as Boolean
+
+        props.toogleAll(checked)
+    }
+
     override fun RBuilder.render() {
-        div("todo-list") {
-            ul {
+        section("main") {
+            input(type = InputType.checkBox, classes = "toggle-all") {
+                attrs {
+                    id = "toggle-all"
+                    onClickFunction = handleToogleAll
+                }
+                ref = inputRef
+            }
+            label {
+                attrs {
+                    // TODO: Chrome warning
+                    htmlFor = "toggle-all"
+                }
+                +"Mark all as complete"
+            }
+            ul("todo-list") {
                 props.todos.forEach {
-                    todoItemComponent(it) {
-                        props.toggleTodo(it.id)
+                    todoItemComponent {
+                        attrs {
+                            key = "${it.id}"
+                            id = it.id
+                            todo = it
+                        }
                     }
                 }
             }
         }
     }
 }
+
+interface OwnTodoListPros : RProps {
+    var id: Int
+}
+
+interface TodoListStateProps : RProps {
+    var todos: Array<Todo>
+    var activeTodoCount: Int
+}
+
+interface TodoListDispatchProps : RProps {
+    var toogleAll: (checked: Boolean) -> Unit
+}
+
+fun TodoListStateProps.mapStateToProps(state: State, ownProps: OwnTodoListPros) {
+    todos = getVisibleTodos(state.todos, state.visibility)
+    activeTodoCount = getVisibleTodos(state.todos, Visibility.SHOW_ACTIVE).size
+}
+
+private fun getVisibleTodos(todos: Array<Todo>, filter: Visibility): Array<Todo> = when (filter) {
+    Visibility.SHOW_ALL -> todos
+    Visibility.SHOW_ACTIVE -> todos.filter { !it.completed }.toTypedArray()
+    Visibility.SHOW_COMPLETED -> todos.filter { it.completed }.toTypedArray()
+}
+
+fun TodoListDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperAction, ownProps: OwnTodoListPros) {
+    toogleAll = { checked -> dispatch(ToggleAllTodosAction(checked)) }
+}
+
+val todoListComponent: RClass<OwnTodoListPros> = rConnect<State, RAction, WrapperAction, OwnTodoListPros, TodoListStateProps, TodoListDispatchProps, TodoListProps>(
+    TodoListStateProps::mapStateToProps,
+    TodoListDispatchProps::mapDispatchToProps
+)(TodoListComponent::class.js.unsafeCast<RClass<TodoListProps>>())
+

@@ -1,10 +1,10 @@
 package katas.todomvc.reducers
 
 import katas.todomvc.actions.SetVisibilityFilterAction
-import katas.todomvc.domain.VisibilityFilter
+import katas.todomvc.domain.Visibility
 import redux.RAction
 
-fun visibilityFilterReducer(state: VisibilityFilter = VisibilityFilter.SHOW_ALL, action: RAction): VisibilityFilter = when (action) {
+fun visibilityFilterReducer(state: Visibility = Visibility.SHOW_ALL, action: RAction): Visibility = when (action) {
     is SetVisibilityFilterAction -> action.filter
     else -> state
 }

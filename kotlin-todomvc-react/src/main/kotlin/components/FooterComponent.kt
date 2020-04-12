@@ -13,4 +13,10 @@ fun RBuilder.footerComponent() =
             +" "
             a("https://github.com/kkadete") { +"kkadete" }
         }
+        p {
+            +"Based on "
+            a("http://todomvc.com"){
+                +"TodoMVC"
+            }
+        }
     }

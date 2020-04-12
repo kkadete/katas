@@ -1,6 +1,6 @@
 package katas.todomvc.domain
 
-enum class VisibilityFilter {
+enum class Visibility {
     SHOW_ALL,
     SHOW_ACTIVE,
     SHOW_COMPLETED

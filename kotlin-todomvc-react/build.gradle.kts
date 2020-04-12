@@ -107,14 +107,14 @@ kotlin {
                         sourceMapEmbedSources = "always"
                     }
 
-                    allWarningsAsErrors = true
+                    allWarningsAsErrors = false
                 }
             }
             runTask {
                 outputFileName = "main.bundle.js"
                 mode = if (!isProductionBuild) DEVELOPMENT else PRODUCTION
                 output.libraryTarget = UMD
-                report = true
+                report = false
                 devServer = DevServer(
                     open = true,
                     port = 3000,

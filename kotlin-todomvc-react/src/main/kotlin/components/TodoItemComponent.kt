@@ -1,30 +1,79 @@
 package katas.todomvc.components
 
+import katas.todomvc.actions.DestroyTodoAction
+import katas.todomvc.actions.ToggleTodoAction
 import katas.todomvc.domain.Todo
-import kotlinx.css.properties.TextDecorationLine
-import kotlinx.css.properties.textDecoration
+import katas.todomvc.reducers.State
 import kotlinx.html.InputType
 import kotlinx.html.js.onClickFunction
-import react.RBuilder
+import org.w3c.dom.events.Event
+import react.*
 import react.dom.*
-import styled.css
-import styled.styledLi
+import react.redux.rConnect
+import redux.RAction
+import redux.WrapperAction
 
-fun RBuilder.todoItemComponent(todo: Todo, onClick: () -> Unit) =
-    styledLi {
-        attrs.onClickFunction = { onClick() }
-        css {
-            if (todo.completed) textDecoration(TextDecorationLine.lineThrough)
-        }
-        div {
-            form {
-                input (type = InputType.checkBox, classes = "toggle"){
-                }
-                label {
-                    +todo.text
-                }
-                button(classes = "destroy") {
+interface TodoItemProps : OwnTodoItemPros, TodoItemStateProps, TodoItemDispatchProps
+
+class TodoItemComponent(props: TodoItemProps) : RComponent<TodoItemProps, RState>(props) {
+
+    private val handleDelete: (Event) -> Unit = {event->
+        event.preventDefault()
+
+        props.destroy(props.id)
+    }
+
+    private val handleToogle: (Event) -> Unit = {
+        props.toggleTodo(props.id)
+    }
+
+    override fun RBuilder.render() {
+        li {
+            attrs {
+                onClickFunction = handleToogle
+            }
+            div {
+                form {
+                    input(type = InputType.checkBox, classes = "toggle") {
+                        attrs {
+                            defaultChecked = props.todo.completed
+                        }
+                    }
+                    label {
+                        +props.todo.text
+                    }
+                    button(classes = "destroy") {
+                        attrs {
+                            onClickFunction = handleDelete
+                        }
+                    }
                 }
             }
         }
     }
+}
+
+interface OwnTodoItemPros : RProps {
+    var id: Int
+    var todo: Todo
+}
+
+interface TodoItemStateProps : RProps
+
+interface TodoItemDispatchProps : RProps {
+    var destroy: (id: Int) -> Unit
+    var toggleTodo: (Int) -> Unit
+}
+
+fun TodoItemStateProps.mapStateToProps(state: State, ownProps: OwnTodoItemPros) {
+}
+
+fun TodoItemDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperAction, ownProps: OwnTodoItemPros) {
+    destroy = { id: Int -> dispatch(DestroyTodoAction(id)) }
+    toggleTodo = { dispatch(ToggleTodoAction(it)) }
+}
+
+val todoItemComponent: RClass<OwnTodoItemPros> = rConnect<State, RAction, WrapperAction, OwnTodoItemPros, TodoItemStateProps, TodoItemDispatchProps, TodoItemProps>(
+    TodoItemStateProps::mapStateToProps,
+    TodoItemDispatchProps::mapDispatchToProps
+)(TodoItemComponent::class.js.unsafeCast<RClass<TodoItemProps>>())

@@ -1,9 +1,8 @@
 package katas.todomvc.components
 
 import katas.todomvc.actions.AddTodoAction
-import katas.todomvc.store
+import katas.todomvc.reducers.State
 import kotlinx.html.InputType
-import kotlinx.html.classes
 import kotlinx.html.js.onSubmitFunction
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
@@ -13,16 +12,19 @@ import react.dom.h1
 import react.dom.header
 import react.dom.input
 import react.redux.rConnect
+import redux.RAction
 import redux.WrapperAction
 
-class TodoHeaderComponent(props: RProps) : RComponent<RProps, RState>(props) {
+interface TodoHeaderProps: OwnTodoHeaderStateProps, TodoHeaderStateProps, TodoHeaderDispatchProps
+
+class TodoHeaderComponent(props: TodoHeaderProps) : RComponent<TodoHeaderProps, RState>(props) {
     private val inputRef = createRef<HTMLInputElement>()
 
-    private val inputHandler: (Event) -> Unit = { event ->
+    private val handleInput: (Event) -> Unit = { event ->
         event.preventDefault()
         inputRef.current!!.let {
             if (it.value.trim().isNotEmpty()) {
-                store.dispatch(AddTodoAction(it.value))
+                props.addTodo(it.value)
                 it.value = ""
             }
         }
@@ -35,13 +37,12 @@ class TodoHeaderComponent(props: RProps) : RComponent<RProps, RState>(props) {
             }
             form {
                 attrs {
-                    onSubmitFunction = inputHandler
+                    onSubmitFunction = handleInput
                 }
-                input(type = InputType.text) {
+                input(type = InputType.text, classes = "new-todo") {
                     attrs {
-                        classes = setOf("new-todo")
-                        placeholder="What needs to be done?"
-                        autoFocus=true
+                        placeholder = "What needs to be done?"
+                        autoFocus = true
                     }
                     ref = inputRef
                 }
@@ -50,4 +51,22 @@ class TodoHeaderComponent(props: RProps) : RComponent<RProps, RState>(props) {
     }
 }
 
-val todoHeaderComponent: RClass<RProps> = rConnect<TodoHeaderComponent, WrapperAction>()(TodoHeaderComponent::class.js.unsafeCast<RClass<RProps>>())
+interface OwnTodoHeaderStateProps : RProps
+
+interface TodoHeaderStateProps : RProps
+
+interface TodoHeaderDispatchProps : RProps {
+    var addTodo: (text: String) -> Unit
+}
+
+fun TodoHeaderStateProps.mapStateToProps(state: State, ownProps: OwnTodoHeaderStateProps) {
+}
+
+fun TodoHeaderDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperAction, ownProps: OwnTodoHeaderStateProps) {
+    addTodo = {text: String -> dispatch(AddTodoAction(text))}
+}
+
+val todoHeaderComponent: RClass<OwnTodoHeaderStateProps> = rConnect<State, RAction, WrapperAction, OwnTodoHeaderStateProps, TodoHeaderStateProps, TodoHeaderDispatchProps, TodoHeaderProps>(
+    TodoHeaderStateProps::mapStateToProps,
+    TodoHeaderDispatchProps::mapDispatchToProps
+)(TodoHeaderComponent::class.js.unsafeCast<RClass<TodoHeaderProps>>())

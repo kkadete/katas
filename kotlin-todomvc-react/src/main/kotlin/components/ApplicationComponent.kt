@@ -1,22 +1,24 @@
 package katas.todomvc.components
 
-import katas.todomvc.container.visibleTodoListComponent
 import react.RBuilder
 import react.dom.div
+import react.dom.section
 import react.router.dom.browserRouter
 import react.router.dom.route
 import react.router.dom.switch
 
-private const val TODO_PATH = "/"
-
 fun RBuilder.application() =
     browserRouter {
         switch {
-            route(TODO_PATH) {
+            // TODO: read #/:filter and update redux
+            route("/") {
                 div {
-                    todoHeaderComponent {}
-                    visibleTodoListComponent {}
-                    todoFooterComponent()
+                    section(classes = "todoapp") {
+                        todoHeaderComponent {}
+                        todoListComponent {}
+                        // TODO: only show footer if there are Todos
+                        todoFooterComponent {}
+                    }
                     footerComponent()
                 }
             }
