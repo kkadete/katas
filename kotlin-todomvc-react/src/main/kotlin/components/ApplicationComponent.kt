@@ -6,6 +6,7 @@ import react.RBuilder
 import react.dom.br
 import react.dom.div
 import react.dom.h1
+import react.dom.section
 import react.router.dom.browserRouter
 import react.router.dom.navLink
 import react.router.dom.route
@@ -28,13 +29,15 @@ fun RBuilder.application() =
             }
             route(TODO_LIST_PATH) {
                 div {
-                    headerComponent {}
-                    visibleTodoListComponent {}
-                    footer()
-                    infoComponent()
-                    br {}
-                    navLink("/") {
-                        +"Go back"
+                    section("application") {
+                        headerComponent {}
+                        visibleTodoListComponent {}
+                        footer()
+                        infoComponent()
+                        br {}
+                        navLink("/") {
+                            +"Go back"
+                        }
                     }
                 }
             }
