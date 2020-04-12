@@ -23,11 +23,15 @@ interface TodoListProps : OwnTodoListPros, TodoListStateProps, TodoListDispatchP
 class TodoListComponent(props: TodoListProps) : RComponent<TodoListProps, RState>(props) {
     private val inputRef = createRef<HTMLInputElement>()
 
-    private val handleToogleAll: (Event) -> Unit = { event ->
-        val target: dynamic = event.target.asDynamic()
-        val checked = target.checked as Boolean
+    override fun RState.init(props: TodoListProps) {
+        // empty
+    }
 
-        props.toogleAll(checked)
+    private val handleToogleAll: (Event) -> Unit = { event ->
+        val target = (event.currentTarget as HTMLInputElement)
+        val isChecked = target.checked
+
+        props.toogleAll(isChecked)
     }
 
     override fun RBuilder.render() {
@@ -41,7 +45,7 @@ class TodoListComponent(props: TodoListProps) : RComponent<TodoListProps, RState
             }
             label {
                 attrs {
-                    // TODO: Chrome warning
+                    // TODO: fix chrome warning
                     htmlFor = "toggle-all"
                 }
                 +"Mark all as complete"

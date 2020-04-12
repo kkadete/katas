@@ -10,8 +10,7 @@ import react.router.dom.switch
 fun RBuilder.application() =
     browserRouter {
         switch {
-            // TODO: read #/:filter and update redux
-            route("/") {
+            route("/:filter?") {
                 div {
                     section(classes = "todoapp") {
                         todoHeaderComponent {}

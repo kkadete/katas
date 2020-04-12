@@ -3,25 +3,29 @@ package katas.todomvc.components
 import katas.todomvc.actions.SetVisibilityFilterAction
 import katas.todomvc.domain.Visibility
 import katas.todomvc.reducers.State
-import kotlinx.html.classes
 import react.*
-import react.dom.a
 import react.dom.li
 import react.redux.rConnect
+import react.router.dom.navLink
 import redux.RAction
 import redux.WrapperAction
 
 interface LinkProps : LinkStateProps, LinkDispatchProps, OwnLinkProps
 
 class LinkComponent(props: LinkProps) : RComponent<LinkProps, RState>(props) {
+
+    override fun RState.init(props: LinkProps) {
+        // empty
+    }
+
     override fun RBuilder.render() {
         li {
-            a {
-                attrs {
-                    classes = if (props.active) setOf("selected") else emptySet()
-                    href = "#/" + props.filter
-                    +props.title
-                }
+            navLink(
+                to = if (props.filter == Visibility.SHOW_ALL) "" else "/${props.filter}",
+                className = if (props.active) "selected" else "",
+                exact = true,
+                activeClassName = "selected") {
+                children()
             }
         }
     }
@@ -29,7 +33,6 @@ class LinkComponent(props: LinkProps) : RComponent<LinkProps, RState>(props) {
 
 interface OwnLinkProps : RProps {
     var filter: Visibility
-    var title: String
 }
 
 interface LinkStateProps : RProps {

@@ -17,6 +17,10 @@ interface TodoItemProps : OwnTodoItemPros, TodoItemStateProps, TodoItemDispatchP
 
 class TodoItemComponent(props: TodoItemProps) : RComponent<TodoItemProps, RState>(props) {
 
+    override fun RState.init(props: TodoItemProps) {
+        // empty
+    }
+
     private val handleDelete: (Event) -> Unit = {event->
         event.preventDefault()
 
@@ -29,14 +33,12 @@ class TodoItemComponent(props: TodoItemProps) : RComponent<TodoItemProps, RState
 
     override fun RBuilder.render() {
         li {
-            attrs {
-                onClickFunction = handleToogle
-            }
             div {
                 form {
                     input(type = InputType.checkBox, classes = "toggle") {
                         attrs {
                             defaultChecked = props.todo.completed
+                            onClickFunction = handleToogle
                         }
                     }
                     label {

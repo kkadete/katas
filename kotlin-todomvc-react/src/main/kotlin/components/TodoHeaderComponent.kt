@@ -20,8 +20,13 @@ interface TodoHeaderProps: OwnTodoHeaderStateProps, TodoHeaderStateProps, TodoHe
 class TodoHeaderComponent(props: TodoHeaderProps) : RComponent<TodoHeaderProps, RState>(props) {
     private val inputRef = createRef<HTMLInputElement>()
 
+    override fun RState.init(props: TodoHeaderProps) {
+        // empty
+    }
+
     private val handleInput: (Event) -> Unit = { event ->
         event.preventDefault()
+
         inputRef.current!!.let {
             if (it.value.trim().isNotEmpty()) {
                 props.addTodo(it.value)
