@@ -43,8 +43,8 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation(kotlin("stdlib-js"))
 
-    implementation("org.jetbrains:kotlin-react:16.13.0-pre.93-kotlin-1.3.70")
-    implementation("org.jetbrains:kotlin-react-dom:16.13.0-pre.93-kotlin-1.3.70")
+    implementation("org.jetbrains:kotlin-react:16.13.0-pre.94-kotlin-1.3.70")
+    implementation("org.jetbrains:kotlin-react-dom:16.13.0-pre.94-kotlin-1.3.70")
     implementation("org.jetbrains:kotlin-react-redux:5.0.7-pre.94-kotlin-1.3.70")
     implementation("org.jetbrains:kotlin-react-router-dom:4.3.1-pre.94-kotlin-1.3.70")
     implementation("org.jetbrains:kotlin-redux:4.0.0-pre.94-kotlin-1.3.70")
