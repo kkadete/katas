@@ -15,7 +15,7 @@ import react.dom.input
 import react.redux.rConnect
 import redux.WrapperAction
 
-class HeaderComponent(props: RProps) : RComponent<RProps, RState>(props) {
+class TodoHeaderComponent(props: RProps) : RComponent<RProps, RState>(props) {
     private val inputRef = createRef<HTMLInputElement>()
 
     private val inputHandler: (Event) -> Unit = { event ->
@@ -50,4 +50,4 @@ class HeaderComponent(props: RProps) : RComponent<RProps, RState>(props) {
     }
 }
 
-val headerComponent: RClass<RProps> = rConnect<HeaderComponent, WrapperAction>()(HeaderComponent::class.js.unsafeCast<RClass<RProps>>())
+val todoHeaderComponent: RClass<RProps> = rConnect<TodoHeaderComponent, WrapperAction>()(TodoHeaderComponent::class.js.unsafeCast<RClass<RProps>>())

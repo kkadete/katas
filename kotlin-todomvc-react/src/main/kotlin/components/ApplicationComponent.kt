@@ -1,6 +1,6 @@
 package katas.todomvc.components
 
-import katas.todomvc.container.headerComponent
+import katas.todomvc.container.todoHeaderComponent
 import katas.todomvc.container.visibleTodoListComponent
 import react.RBuilder
 import react.dom.div
@@ -15,10 +15,10 @@ fun RBuilder.application() =
         switch {
             route(TODO_PATH) {
                 div(classes = "application") {
-                    headerComponent {}
+                    todoHeaderComponent {}
                     visibleTodoListComponent {}
                     todoFooterComponent()
-                    infoComponent()
+                    footerComponent()
                 }
             }
         }

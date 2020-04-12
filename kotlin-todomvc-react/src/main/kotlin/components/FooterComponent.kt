@@ -1,24 +1,16 @@
 package katas.todomvc.components
 
-import katas.todomvc.container.filterLinkComponent
-import katas.todomvc.domain.VisibilityFilter
 import react.RBuilder
-import react.dom.div
-import react.dom.span
+import react.dom.a
+import react.dom.footer
+import react.dom.p
 
-fun RBuilder.todoFooterComponent() =
-    div("footer") {
-        span { +"Show: " }
-        filterLinkComponent {
-            attrs.filter = VisibilityFilter.SHOW_ALL
-            +"All"
-        }
-        filterLinkComponent {
-            attrs.filter = VisibilityFilter.SHOW_ACTIVE
-            +"Active"
-        }
-        filterLinkComponent {
-            attrs.filter = VisibilityFilter.SHOW_COMPLETED
-            +"Completed"
+fun RBuilder.footerComponent() =
+    footer("info") {
+        p { +"Double-click to edit a todo" }
+        p {
+            +"Created by"
+            +" "
+            a("https://github.com/kkadete") { +"kkadete" }
         }
     }
