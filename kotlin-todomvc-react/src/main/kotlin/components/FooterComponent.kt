@@ -7,7 +7,7 @@ import react.dom.div
 import react.dom.span
 
 fun RBuilder.footer() =
-    div {
+    div("footer") {
         span { +"Show: " }
         filterLinkComponent {
             attrs.filter = VisibilityFilter.SHOW_ALL
