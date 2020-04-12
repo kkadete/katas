@@ -6,7 +6,7 @@ import react.RBuilder
 import react.dom.div
 import react.dom.span
 
-fun RBuilder.footer() =
+fun RBuilder.todoFooterComponent() =
     div("footer") {
         span { +"Show: " }
         filterLinkComponent {

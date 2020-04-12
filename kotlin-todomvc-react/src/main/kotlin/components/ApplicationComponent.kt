@@ -17,7 +17,7 @@ fun RBuilder.application() =
                 div(classes = "application") {
                     headerComponent {}
                     visibleTodoListComponent {}
-                    footer()
+                    todoFooterComponent()
                     infoComponent()
                 }
             }
