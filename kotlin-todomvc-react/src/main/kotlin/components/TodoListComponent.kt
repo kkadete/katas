@@ -5,6 +5,7 @@ import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
+import react.dom.div
 import react.dom.ul
 
 interface TodoListProps : RProps {
@@ -14,8 +15,14 @@ interface TodoListProps : RProps {
 
 class TodoListComponent(props: TodoListProps) : RComponent<TodoListProps, RState>(props) {
     override fun RBuilder.render() {
-        ul {
-            props.todos.forEach { todoComponent(it) { props.toggleTodo(it.id) } }
+        div("todo-list") {
+            ul {
+                props.todos.forEach {
+                    todoItemComponent(it) {
+                        props.toggleTodo(it.id)
+                    }
+                }
+            }
         }
     }
 }
