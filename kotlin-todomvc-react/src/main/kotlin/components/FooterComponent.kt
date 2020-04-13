@@ -1,11 +1,13 @@
 package katas.todomvc.components
 
 import react.RBuilder
+import react.RProps
 import react.dom.a
 import react.dom.footer
 import react.dom.p
+import react.rFunction
 
-fun RBuilder.footerComponent() =
+val FooterComponent = rFunction("FooterComponent") { _: RProps ->
     footer("info") {
         p { +"Double-click to edit a todo" }
         p {
@@ -15,8 +17,11 @@ fun RBuilder.footerComponent() =
         }
         p {
             +"Based on "
-            a("http://todomvc.com"){
+            a("http://todomvc.com") {
                 +"TodoMVC"
             }
         }
     }
+}
+
+fun RBuilder.footerComponent() = FooterComponent {}

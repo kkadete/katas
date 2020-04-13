@@ -11,11 +11,9 @@ import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
 
-interface TodoFooterProps : OwnTodoFooterProps, TodoFooterStateProps, TodoFooterDispatchProps
+class TodoFooterComponent(props: ConnectedTodoFooterProps) : RComponent<ConnectedTodoFooterProps, RState>(props) {
 
-class TodoFooterComponent(props: TodoFooterProps) : RComponent<TodoFooterProps, RState>(props) {
-
-    override fun RState.init(props: TodoFooterProps) {
+    override fun RState.init(props: ConnectedTodoFooterProps) {
         // empty
     }
 
@@ -69,6 +67,8 @@ class TodoFooterComponent(props: TodoFooterProps) : RComponent<TodoFooterProps, 
     }
 }
 
+interface ConnectedTodoFooterProps : OwnTodoFooterProps, TodoFooterStateProps, TodoFooterDispatchProps
+
 interface OwnTodoFooterProps : RProps
 
 interface TodoFooterStateProps : RProps {
@@ -89,7 +89,11 @@ fun TodoFooterDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperAct
     clearCompleted = { dispatch(ClearCompletedTodosAction()) }
 }
 
-val todoFooterComponent: RClass<OwnTodoFooterProps> = rConnect<State, RAction, WrapperAction, OwnTodoFooterProps, TodoFooterStateProps, TodoFooterDispatchProps, TodoFooterProps>(
+val TodoFooterConnector = rConnect<State, RAction, WrapperAction, OwnTodoFooterProps, TodoFooterStateProps, TodoFooterDispatchProps, ConnectedTodoFooterProps>(
     TodoFooterStateProps::mapStateToProps,
     TodoFooterDispatchProps::mapDispatchToProps
-)(TodoFooterComponent::class.js.unsafeCast<RClass<TodoFooterProps>>())
+)
+
+val ConnectedTodoFooter = TodoFooterConnector(TodoFooterComponent::class.js.unsafeCast<RClass<ConnectedTodoFooterProps>>())
+
+fun RBuilder.todoFooterComponent() = ConnectedTodoFooter {}

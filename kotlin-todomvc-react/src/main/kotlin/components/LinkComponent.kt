@@ -10,11 +10,9 @@ import react.router.dom.navLink
 import redux.RAction
 import redux.WrapperAction
 
-interface LinkProps : LinkStateProps, LinkDispatchProps, OwnLinkProps
+class LinkComponent(props: ConnectedLinkProps) : RComponent<ConnectedLinkProps, RState>(props) {
 
-class LinkComponent(props: LinkProps) : RComponent<LinkProps, RState>(props) {
-
-    override fun RState.init(props: LinkProps) {
+    override fun RState.init(props: ConnectedLinkProps) {
         // empty
     }
 
@@ -30,6 +28,8 @@ class LinkComponent(props: LinkProps) : RComponent<LinkProps, RState>(props) {
         }
     }
 }
+
+interface ConnectedLinkProps : LinkStateProps, LinkDispatchProps, OwnLinkProps
 
 interface OwnLinkProps : RProps {
     var filter: Visibility
@@ -51,7 +51,12 @@ fun LinkDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperAction, o
     setVisibilityFilter = { dispatch(SetVisibilityFilterAction(ownProps.filter)) }
 }
 
-val linkComponent: RClass<OwnLinkProps> = rConnect<State, RAction, WrapperAction, OwnLinkProps, LinkStateProps, LinkDispatchProps, LinkProps>(
+val LinkConnector= rConnect<State, RAction, WrapperAction, OwnLinkProps, LinkStateProps, LinkDispatchProps, ConnectedLinkProps>(
     LinkStateProps::mapStateToProps,
     LinkDispatchProps::mapDispatchToProps
-)(LinkComponent::class.js.unsafeCast<RClass<LinkProps>>())
+)
+val ConnectedLink = LinkConnector(LinkComponent::class.js.unsafeCast<RClass<ConnectedLinkProps>>())
+
+fun RBuilder.linkComponent(handler: RHandler<OwnLinkProps>) = ConnectedLink {
+    handler()
+}

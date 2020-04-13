@@ -13,11 +13,9 @@ import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
 
-interface TodoItemProps : OwnTodoItemPros, TodoItemStateProps, TodoItemDispatchProps
+class TodoItemComponent(props: ConnectedTodoItemProps) : RComponent<ConnectedTodoItemProps, RState>(props) {
 
-class TodoItemComponent(props: TodoItemProps) : RComponent<TodoItemProps, RState>(props) {
-
-    override fun RState.init(props: TodoItemProps) {
+    override fun RState.init(props: ConnectedTodoItemProps) {
         // empty
     }
 
@@ -55,6 +53,8 @@ class TodoItemComponent(props: TodoItemProps) : RComponent<TodoItemProps, RState
     }
 }
 
+interface ConnectedTodoItemProps : OwnTodoItemPros, TodoItemStateProps, TodoItemDispatchProps
+
 interface OwnTodoItemPros : RProps {
     var id: Int
     var todo: Todo
@@ -75,12 +75,13 @@ fun TodoItemDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperActio
     toggleTodo = { dispatch(ToggleTodoAction(it)) }
 }
 
-val ConnectedTodoItemComponent: RClass<OwnTodoItemPros> = rConnect<State, RAction, WrapperAction, OwnTodoItemPros, TodoItemStateProps, TodoItemDispatchProps, TodoItemProps>(
+val TodoItemConnector = rConnect<State, RAction, WrapperAction, OwnTodoItemPros, TodoItemStateProps, TodoItemDispatchProps, ConnectedTodoItemProps>(
     TodoItemStateProps::mapStateToProps,
     TodoItemDispatchProps::mapDispatchToProps
-)(TodoItemComponent::class.js.unsafeCast<RClass<TodoItemProps>>())
+)
+val ConnectedTodoItem = TodoItemConnector(TodoItemComponent::class.js.unsafeCast<RClass<ConnectedTodoItemProps>>())
 
-fun RBuilder.todoItemComponent(key: String, id: Int, todo: Todo): ReactElement = ConnectedTodoItemComponent {
+fun RBuilder.todoItemComponent(key: String, id: Int, todo: Todo): ReactElement = ConnectedTodoItem {
     attrs.key = key
     attrs.id = id
     attrs.todo = todo

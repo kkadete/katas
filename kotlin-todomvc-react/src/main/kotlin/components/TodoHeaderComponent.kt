@@ -15,12 +15,10 @@ import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
 
-interface TodoHeaderProps: OwnTodoHeaderStateProps, TodoHeaderStateProps, TodoHeaderDispatchProps
-
-class TodoHeaderComponent(props: TodoHeaderProps) : RComponent<TodoHeaderProps, RState>(props) {
+class TodoHeaderComponent(props: ConnectedTodoHeaderProps) : RComponent<ConnectedTodoHeaderProps, RState>(props) {
     private val inputRef = createRef<HTMLInputElement>()
 
-    override fun RState.init(props: TodoHeaderProps) {
+    override fun RState.init(props: ConnectedTodoHeaderProps) {
         // empty
     }
 
@@ -56,6 +54,8 @@ class TodoHeaderComponent(props: TodoHeaderProps) : RComponent<TodoHeaderProps, 
     }
 }
 
+interface ConnectedTodoHeaderProps : OwnTodoHeaderStateProps, TodoHeaderStateProps, TodoHeaderDispatchProps
+
 interface OwnTodoHeaderStateProps : RProps
 
 interface TodoHeaderStateProps : RProps
@@ -68,10 +68,13 @@ fun TodoHeaderStateProps.mapStateToProps(state: State, ownProps: OwnTodoHeaderSt
 }
 
 fun TodoHeaderDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperAction, ownProps: OwnTodoHeaderStateProps) {
-    addTodo = {text: String -> dispatch(AddTodoAction(text))}
+    addTodo = { text: String -> dispatch(AddTodoAction(text)) }
 }
 
-val todoHeaderComponent: RClass<OwnTodoHeaderStateProps> = rConnect<State, RAction, WrapperAction, OwnTodoHeaderStateProps, TodoHeaderStateProps, TodoHeaderDispatchProps, TodoHeaderProps>(
+val TodoHeaderConnector = rConnect<State, RAction, WrapperAction, OwnTodoHeaderStateProps, TodoHeaderStateProps, TodoHeaderDispatchProps, ConnectedTodoHeaderProps>(
     TodoHeaderStateProps::mapStateToProps,
     TodoHeaderDispatchProps::mapDispatchToProps
-)(TodoHeaderComponent::class.js.unsafeCast<RClass<TodoHeaderProps>>())
+)
+val ConnectedTodoHeader = TodoHeaderConnector(TodoHeaderComponent::class.js.unsafeCast<RClass<ConnectedTodoHeaderProps>>())
+
+fun RBuilder.todoHeaderComponent() = ConnectedTodoHeader {}

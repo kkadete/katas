@@ -18,12 +18,10 @@ import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
 
-interface TodoListProps : OwnTodoListPros, TodoListStateProps, TodoListDispatchProps
-
-class TodoListComponent(props: TodoListProps) : RComponent<TodoListProps, RState>(props) {
+class TodoListComponent(props: ConnectedTodoListProps) : RComponent<ConnectedTodoListProps, RState>(props) {
     private val inputRef = createRef<HTMLInputElement>()
 
-    override fun RState.init(props: TodoListProps) {
+    override fun RState.init(props: ConnectedTodoListProps) {
         // empty
     }
 
@@ -59,9 +57,9 @@ class TodoListComponent(props: TodoListProps) : RComponent<TodoListProps, RState
     }
 }
 
-interface OwnTodoListPros : RProps {
-    var id: Int
-}
+interface ConnectedTodoListProps : OwnTodoListPros, TodoListStateProps, TodoListDispatchProps
+
+interface OwnTodoListPros : RProps
 
 interface TodoListStateProps : RProps {
     var todos: Array<Todo>
@@ -87,8 +85,10 @@ fun TodoListDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperActio
     toogleAll = { checked -> dispatch(ToggleAllTodosAction(checked)) }
 }
 
-val todoListComponent: RClass<OwnTodoListPros> = rConnect<State, RAction, WrapperAction, OwnTodoListPros, TodoListStateProps, TodoListDispatchProps, TodoListProps>(
+val TodoListConnector = rConnect<State, RAction, WrapperAction, OwnTodoListPros, TodoListStateProps, TodoListDispatchProps, ConnectedTodoListProps>(
     TodoListStateProps::mapStateToProps,
     TodoListDispatchProps::mapDispatchToProps
-)(TodoListComponent::class.js.unsafeCast<RClass<TodoListProps>>())
+)
+val ConnectedTodoList = TodoListConnector(TodoListComponent::class.js.unsafeCast<RClass<ConnectedTodoListProps>>())
 
+fun RBuilder.todoListComponent() = ConnectedTodoList {}

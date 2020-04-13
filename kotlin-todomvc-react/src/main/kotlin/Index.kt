@@ -1,11 +1,9 @@
 package katas.todomvc
 
-
-import katas.todomvc.components.application
 import katas.todomvc.reducers.State
 import katas.todomvc.reducers.combinedReducers
-import kotlinext.js.requireAll
 import kotlinext.js.require
+import kotlinext.js.requireAll
 import react.dom.render
 import react.redux.provider
 import redux.RAction
@@ -27,7 +25,7 @@ fun main() {
     val rootDiv = document.getElementById("root")
     render(rootDiv) {
         provider(store) {
-            application()
+            applicationRouter()
         }
     }
 }
