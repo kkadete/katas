@@ -52,13 +52,7 @@ class TodoListComponent(props: TodoListProps) : RComponent<TodoListProps, RState
             }
             ul("todo-list") {
                 props.todos.forEach {
-                    todoItemComponent {
-                        attrs {
-                            key = "${it.id}"
-                            id = it.id
-                            todo = it
-                        }
-                    }
+                    todoItemComponent(key = "${it.id}", id = it.id, todo = it)
                 }
             }
         }

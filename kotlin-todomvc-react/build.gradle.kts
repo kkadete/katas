@@ -49,7 +49,6 @@ dependencies {
     implementation("org.jetbrains:kotlin-react-redux:5.0.7-pre.94-kotlin-1.3.70")
     implementation("org.jetbrains:kotlin-react-router-dom:4.3.1-pre.94-kotlin-1.3.70")
     implementation("org.jetbrains:kotlin-redux:4.0.0-pre.94-kotlin-1.3.70")
-    implementation("org.jetbrains:kotlin-styled:1.0.0-pre.94-kotlin-1.3.70")
 
     implementation(npm("core-js", "3.6.5"))
     implementation(npm("react", "16.13.0"))
@@ -58,9 +57,13 @@ dependencies {
     implementation(npm("react-redux", "5.0.7"))
     implementation(npm("react-router-dom", "4.3.1"))
     implementation(npm("redux", "4.0.0"))
+
+    // Kotlin Styled
+    implementation("org.jetbrains:kotlin-styled:1.0.0-pre.94-kotlin-1.3.70")
     implementation(npm("inline-style-prefixer", "6.0.0"))
     implementation(npm("styled-components", "5.1.0"))
 
+    // Webpack
     implementation(npm("html-webpack-plugin", "4.2.0"))
     implementation(npm("style-loader", "1.1.3"))
     implementation(npm("css-loader", "3.5.2"))
