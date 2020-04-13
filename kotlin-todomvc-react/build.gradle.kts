@@ -107,9 +107,7 @@ kotlin {
                     moduleKind = COMMONJS
                     main = "call"
                     sourceMap = !isProductionBuild
-                    if (!isProductionBuild) {
-                        sourceMapEmbedSources = "always"
-                    }
+                    sourceMapEmbedSources =  if(!isProductionBuild) "always" else "never"
 
                     allWarningsAsErrors = false
                 }
@@ -119,6 +117,7 @@ kotlin {
                 mode = if (!isProductionBuild) DEVELOPMENT else PRODUCTION
                 output.libraryTarget = UMD
                 report = false
+                sourceMaps = !isProductionBuild
                 devServer = DevServer(
                     open = true,
                     port = 3000,
