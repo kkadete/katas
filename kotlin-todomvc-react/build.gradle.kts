@@ -14,7 +14,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("js") version "1.3.71"
+    kotlin("js") version "1.3.72"
 }
 
 group = "katas.todomvc"
@@ -31,7 +31,7 @@ repositories {
 configurations.all {
     if (isProductionBuild) {
         resolutionStrategy {
-            // TODO: different kotlin version
+            // TODO: different kotlin dependency versions
             // failOnVersionConflict()
             failOnDynamicVersions()
             failOnChangingVersions()
