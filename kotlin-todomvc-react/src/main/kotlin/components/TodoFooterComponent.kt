@@ -5,66 +5,62 @@ import katas.todomvc.domain.Visibility
 import katas.todomvc.reducers.State
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
-import react.*
+import react.RBuilder
+import react.RProps
 import react.dom.*
+import react.rFunction
 import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
+import react.*
 
-class TodoFooterComponent(props: ConnectedTodoFooterProps) : RComponent<ConnectedTodoFooterProps, RState>(props) {
-
-    override fun RState.init(props: ConnectedTodoFooterProps) {
-        // empty
-    }
-
-    private val handleClearCompleted: (Event) -> Unit = {
+val TodoFooter = rFunction("TodoFooterComponent") { props: ConnectedTodoFooterProps ->
+    val handleClearCompleted: (Event) -> Unit = {
         props.clearCompleted()
     }
 
-    override fun RBuilder.render() {
-        footer("footer") {
-            span("todo-count") {
-                strong {
-                    +"${props.count}"
-                }
-                +" "
-                +pluralize(props.count, "item")
-                +" left"
+    footer("footer") {
+        span("todo-count") {
+            strong {
+                +"${props.count}"
             }
-            ul("filters") {
-                linkComponent {
-                    attrs {
-                        filter = Visibility.SHOW_ALL
-                    }
-                    +"All"
+            +" "
+            +pluralize(props.count, "item")
+            +" left"
+        }
+        ul("filters") {
+            linkComponent {
+                attrs {
+                    filter = Visibility.SHOW_ALL
                 }
-                linkComponent {
-                    attrs {
-                        filter = Visibility.SHOW_ACTIVE
-                    }
-                    +"Active"
-                }
-                linkComponent {
-                    attrs {
-                        filter = Visibility.SHOW_COMPLETED
-                    }
-                    +"Completed"
-                }
+                +"All"
             }
-            if (props.completedCount > 0) {
-                button(classes = "clear-completed") {
-                    attrs {
-                        onClickFunction = handleClearCompleted
-                    }
-                    +"Clear completed"
+            linkComponent {
+                attrs {
+                    filter = Visibility.SHOW_ACTIVE
                 }
+                +"Active"
+            }
+            linkComponent {
+                attrs {
+                    filter = Visibility.SHOW_COMPLETED
+                }
+                +"Completed"
+            }
+        }
+        if (props.completedCount > 0) {
+            button(classes = "clear-completed") {
+                attrs {
+                    onClickFunction = handleClearCompleted
+                }
+                +"Clear completed"
             }
         }
     }
+}
 
-    private fun pluralize(count: Int, word: String): String {
-        return if (count == 0) word else word + "s"
-    }
+private fun pluralize(count: Int, word: String): String {
+    return if (count == 0) word else word + "s"
 }
 
 interface ConnectedTodoFooterProps : OwnTodoFooterProps, TodoFooterStateProps, TodoFooterDispatchProps
@@ -94,6 +90,6 @@ val TodoFooterConnector = rConnect<State, RAction, WrapperAction, OwnTodoFooterP
     TodoFooterDispatchProps::mapDispatchToProps
 )
 
-val ConnectedTodoFooter = TodoFooterConnector(TodoFooterComponent::class.js.unsafeCast<RClass<ConnectedTodoFooterProps>>())
+val ConnectedTodoFooter = TodoFooterConnector(TodoFooter)
 
 fun RBuilder.todoFooterComponent() = ConnectedTodoFooter {}

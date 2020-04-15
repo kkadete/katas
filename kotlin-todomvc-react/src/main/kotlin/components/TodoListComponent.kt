@@ -18,40 +18,33 @@ import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
 
-class TodoListComponent(props: ConnectedTodoListProps) : RComponent<ConnectedTodoListProps, RState>(props) {
-    private val inputRef = createRef<HTMLInputElement>()
+val TodoList = rFunction("TodoListComponent") { props: ConnectedTodoListProps ->
+    val inputRef = createRef<HTMLInputElement>()
 
-    override fun RState.init(props: ConnectedTodoListProps) {
-        // empty
-    }
-
-    private val handleToogleAll: (Event) -> Unit = { event ->
+    val handleToogleAll: (Event) -> Unit = { event ->
         val target = (event.currentTarget as HTMLInputElement)
         val isChecked = target.checked
 
         props.toogleAll(isChecked)
     }
-
-    override fun RBuilder.render() {
-        section("main") {
-            input(type = InputType.checkBox, classes = "toggle-all") {
-                attrs {
-                    id = "toggle-all"
-                    onClickFunction = handleToogleAll
-                }
-                ref = inputRef
+    section("main") {
+        input(type = InputType.checkBox, classes = "toggle-all") {
+            attrs {
+                id = "toggle-all"
+                onClickFunction = handleToogleAll
             }
-            label {
-                attrs {
-                    // TODO: fix chrome warning
-                    htmlFor = "toggle-all"
-                }
-                +"Mark all as complete"
+            ref = inputRef
+        }
+        label {
+            attrs {
+                // TODO: fix chrome warning
+                htmlFor = "toggle-all"
             }
-            ul("todo-list") {
-                props.todos.forEach {
-                    todoItemComponent(key = "${it.id}", id = it.id, todo = it)
-                }
+            +"Mark all as complete"
+        }
+        ul("todo-list") {
+            props.todos.forEach {
+                todoItemComponent(key = "${it.id}", id = it.id, todo = it)
             }
         }
     }
@@ -89,6 +82,6 @@ val TodoListConnector = rConnect<State, RAction, WrapperAction, OwnTodoListPros,
     TodoListStateProps::mapStateToProps,
     TodoListDispatchProps::mapDispatchToProps
 )
-val ConnectedTodoList = TodoListConnector(TodoListComponent::class.js.unsafeCast<RClass<ConnectedTodoListProps>>())
+val ConnectedTodoList = TodoListConnector(TodoList)
 
 fun RBuilder.todoListComponent() = ConnectedTodoList {}
