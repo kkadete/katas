@@ -52,6 +52,14 @@ class TodoHeaderComponent(props: ConnectedTodoHeaderProps) : RComponent<Connecte
             }
         }
     }
+
+    companion object : RStatics<ConnectedTodoItemProps, RState, TodoItemComponent, Nothing>(TodoItemComponent::class) {
+        init {
+            TodoItemComponent.getDerivedStateFromProps = { props, state ->
+                state
+            }
+        }
+    }
 }
 
 interface ConnectedTodoHeaderProps : OwnTodoHeaderStateProps, TodoHeaderStateProps, TodoHeaderDispatchProps

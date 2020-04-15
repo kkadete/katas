@@ -27,6 +27,7 @@ val TodoList = rFunction("TodoListComponent") { props: ConnectedTodoListProps ->
 
         props.toogleAll(isChecked)
     }
+
     section("main") {
         input(type = InputType.checkBox, classes = "toggle-all") {
             attrs {

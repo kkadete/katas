@@ -51,6 +51,14 @@ class TodoItemComponent(props: ConnectedTodoItemProps) : RComponent<ConnectedTod
             }
         }
     }
+
+    companion object : RStatics<ConnectedTodoItemProps, RState, TodoItemComponent, Nothing>(TodoItemComponent::class) {
+        init {
+            getDerivedStateFromProps = { props, state ->
+                state
+            }
+        }
+    }
 }
 
 interface ConnectedTodoItemProps : OwnTodoItemPros, TodoItemStateProps, TodoItemDispatchProps
