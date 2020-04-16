@@ -15,14 +15,10 @@ import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
 
-class TodoHeaderComponent(props: ConnectedTodoHeaderProps) : RComponent<ConnectedTodoHeaderProps, RState>(props) {
-    private val inputRef = createRef<HTMLInputElement>()
+val TodoHeader = rFunction("TodoHeaderComponent") { props: ConnectedTodoHeaderProps ->
+    val inputRef = createRef<HTMLInputElement>()
 
-    override fun RState.init(props: ConnectedTodoHeaderProps) {
-        // empty
-    }
-
-    private val handleInput: (Event) -> Unit = { event ->
+    val handleInput: (Event) -> Unit = { event ->
         event.preventDefault()
 
         inputRef.current!!.let {
@@ -33,30 +29,20 @@ class TodoHeaderComponent(props: ConnectedTodoHeaderProps) : RComponent<Connecte
         }
     }
 
-    override fun RBuilder.render() {
-        header("header") {
-            h1 {
-                +"todos"
-            }
-            form {
-                attrs {
-                    onSubmitFunction = handleInput
-                }
-                input(type = InputType.text, classes = "new-todo") {
-                    attrs {
-                        placeholder = "What needs to be done?"
-                        autoFocus = true
-                    }
-                    ref = inputRef
-                }
-            }
+    header("header") {
+        h1 {
+            +"todos"
         }
-    }
-
-    companion object : RStatics<ConnectedTodoItemProps, RState, TodoItemComponent, Nothing>(TodoItemComponent::class) {
-        init {
-            TodoItemComponent.getDerivedStateFromProps = { props, state ->
-                state
+        form {
+            attrs {
+                onSubmitFunction = handleInput
+            }
+            input(type = InputType.text, classes = "new-todo") {
+                attrs {
+                    placeholder = "What needs to be done?"
+                    autoFocus = true
+                }
+                ref = inputRef
             }
         }
     }
@@ -83,6 +69,6 @@ val TodoHeaderConnector = rConnect<State, RAction, WrapperAction, OwnTodoHeaderS
     TodoHeaderStateProps::mapStateToProps,
     TodoHeaderDispatchProps::mapDispatchToProps
 )
-val ConnectedTodoHeader = TodoHeaderConnector(TodoHeaderComponent::class.js.unsafeCast<RClass<ConnectedTodoHeaderProps>>())
+val ConnectedTodoHeader = TodoHeaderConnector(TodoHeader)
 
 fun RBuilder.todoHeaderComponent() = ConnectedTodoHeader {}

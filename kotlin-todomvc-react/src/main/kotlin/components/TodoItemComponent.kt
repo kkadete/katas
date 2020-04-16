@@ -13,49 +13,35 @@ import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
 
-class TodoItemComponent(props: ConnectedTodoItemProps) : RComponent<ConnectedTodoItemProps, RState>(props) {
+val TodoItem = rFunction("TodoItemComponent") { props: ConnectedTodoItemProps ->
 
-    override fun RState.init(props: ConnectedTodoItemProps) {
-        // empty
-    }
-
-    private val handleDelete: (Event) -> Unit = {event->
+    val handleDelete: (Event) -> Unit = { event ->
         event.preventDefault()
 
         props.destroy(props.id)
     }
 
-    private val handleToogle: (Event) -> Unit = {
+    val handleToogle: (Event) -> Unit = {
         props.toggleTodo(props.id)
     }
 
-    override fun RBuilder.render() {
-        li {
-            div {
-                form {
-                    input(type = InputType.checkBox, classes = "toggle") {
-                        attrs {
-                            defaultChecked = props.todo.completed
-                            onClickFunction = handleToogle
-                        }
-                    }
-                    label {
-                        +props.todo.text
-                    }
-                    button(classes = "destroy") {
-                        attrs {
-                            onClickFunction = handleDelete
-                        }
+    li {
+        div {
+            form {
+                input(type = InputType.checkBox, classes = "toggle") {
+                    attrs {
+                        defaultChecked = props.todo.completed
+                        onClickFunction = handleToogle
                     }
                 }
-            }
-        }
-    }
-
-    companion object : RStatics<ConnectedTodoItemProps, RState, TodoItemComponent, Nothing>(TodoItemComponent::class) {
-        init {
-            getDerivedStateFromProps = { props, state ->
-                state
+                label {
+                    +props.todo.text
+                }
+                button(classes = "destroy") {
+                    attrs {
+                        onClickFunction = handleDelete
+                    }
+                }
             }
         }
     }
@@ -87,7 +73,7 @@ val TodoItemConnector = rConnect<State, RAction, WrapperAction, OwnTodoItemPros,
     TodoItemStateProps::mapStateToProps,
     TodoItemDispatchProps::mapDispatchToProps
 )
-val ConnectedTodoItem = TodoItemConnector(TodoItemComponent::class.js.unsafeCast<RClass<ConnectedTodoItemProps>>())
+val ConnectedTodoItem = TodoItemConnector(TodoItem)
 
 fun RBuilder.todoItemComponent(key: String, id: Int, todo: Todo): ReactElement = ConnectedTodoItem {
     attrs.key = key
