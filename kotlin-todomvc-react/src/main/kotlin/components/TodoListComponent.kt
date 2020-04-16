@@ -1,5 +1,6 @@
 package katas.todomvc.components
 
+import katas.todomvc.actions.SaveTodoAction
 import katas.todomvc.actions.ToggleAllTodosAction
 import katas.todomvc.domain.Todo
 import katas.todomvc.domain.Visibility
@@ -21,18 +22,33 @@ import redux.WrapperAction
 val TodoList = rFunction("TodoListComponent") { props: ConnectedTodoListProps ->
     val inputRef = createRef<HTMLInputElement>()
 
-    val handleToogleAll: (Event) -> Unit = { event ->
+    var (editing, setEditing) = useState(2)
+
+    fun handleToogleAll(event: Event): Unit {
         val target = (event.currentTarget as HTMLInputElement)
         val isChecked = target.checked
 
         props.toogleAll(isChecked)
     }
 
+    fun handleOnEdit(id: Int) {
+        setEditing(id)
+    }
+
+    fun handleOnSave(id: Int, title: String) {
+        props.saveTodo(id, title)
+        setEditing(-1)
+    }
+
+    fun handleOnCancel() {
+        setEditing(-1)
+    }
+
     section("main") {
         input(type = InputType.checkBox, classes = "toggle-all") {
             attrs {
                 id = "toggle-all"
-                onClickFunction = handleToogleAll
+                onClickFunction = ::handleToogleAll
             }
             ref = inputRef
         }
@@ -45,7 +61,13 @@ val TodoList = rFunction("TodoListComponent") { props: ConnectedTodoListProps ->
         }
         ul("todo-list") {
             props.todos.forEach {
-                todoItemComponent(key = "${it.id}", id = it.id, todo = it)
+                todoItemComponent(key = "${it.id}", id = it.id, editing = editing == it.id) {
+                    attrs {
+                        onEdit = ::handleOnEdit
+                        onSave = ::handleOnSave
+                        onCancel = ::handleOnCancel
+                    }
+                }
             }
         }
     }
@@ -62,6 +84,7 @@ interface TodoListStateProps : RProps {
 
 interface TodoListDispatchProps : RProps {
     var toogleAll: (checked: Boolean) -> Unit
+    var saveTodo: (id: Int, text: String) -> Unit
 }
 
 fun TodoListStateProps.mapStateToProps(state: State, ownProps: OwnTodoListPros) {
@@ -77,6 +100,7 @@ private fun getVisibleTodos(todos: Array<Todo>, filter: Visibility): Array<Todo>
 
 fun TodoListDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperAction, ownProps: OwnTodoListPros) {
     toogleAll = { checked -> dispatch(ToggleAllTodosAction(checked)) }
+    saveTodo = { id: Int, title: String -> dispatch(SaveTodoAction(id, title)) }
 }
 
 val TodoListConnector = rConnect<State, RAction, WrapperAction, OwnTodoListPros, TodoListStateProps, TodoListDispatchProps, ConnectedTodoListProps>(

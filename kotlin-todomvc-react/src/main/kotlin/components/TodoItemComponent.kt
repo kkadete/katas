@@ -5,7 +5,11 @@ import katas.todomvc.actions.ToggleTodoAction
 import katas.todomvc.domain.Todo
 import katas.todomvc.reducers.State
 import kotlinx.html.InputType
+import kotlinx.html.classes
+import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
+import kotlinx.html.js.onDoubleClickFunction
+import kotlinx.html.js.onSubmitFunction
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
@@ -13,7 +17,20 @@ import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
 
+
 val TodoItem = rFunction("TodoItemComponent") { props: ConnectedTodoItemProps ->
+
+    val handleEdit: (Event) -> Unit = {
+        props.onEdit(3)
+    }
+
+    val handleSubmit: (Event) -> Unit = {
+        // TODO
+    }
+
+    val handleOnChange: (Event) -> Unit = {
+        // TODO
+    }
 
     val handleDelete: (Event) -> Unit = { event ->
         event.preventDefault()
@@ -25,58 +42,79 @@ val TodoItem = rFunction("TodoItemComponent") { props: ConnectedTodoItemProps ->
         props.toggleTodo(props.id)
     }
 
+    var editText = useState(props.todo.title);
+
     li {
-        div {
-            form {
-                input(type = InputType.checkBox, classes = "toggle") {
-                    attrs {
-                        defaultChecked = props.todo.completed
-                        onClickFunction = handleToogle
-                    }
-                }
-                label {
-                    +props.todo.text
-                }
-                button(classes = "destroy") {
-                    attrs {
-                        onClickFunction = handleDelete
-                    }
+        attrs {
+            classes = setOf(if (props.todo.completed) "completed" else "", if (props.editing) "editing" else "")
+        }
+        div(classes = "view") {
+            input(type = InputType.checkBox, classes = "toggle") {
+                attrs {
+                    checked = props.todo.completed
+                    onChangeFunction = handleToogle
                 }
             }
+            label {
+                attrs {
+                    onDoubleClickFunction = handleEdit
+                }
+                +props.todo.title
+            }
+            button(classes = "destroy") {
+                attrs {
+                    onClickFunction = handleDelete
+                }
+            }
+        }
+        input(type = InputType.text, classes = "edit") {
+            attrs {
+                value = editText.first
+                onSubmitFunction = handleSubmit
+                onChangeFunction = handleOnChange
+            }
+            // ref =
         }
     }
 }
 
-interface ConnectedTodoItemProps : OwnTodoItemPros, TodoItemStateProps, TodoItemDispatchProps
+interface ConnectedTodoItemProps : OwnTodoItemProps, TodoItemStateProps, TodoItemDispatchProps
 
-interface OwnTodoItemPros : RProps {
+interface OwnTodoItemProps : RProps {
     var id: Int
-    var todo: Todo
+    var editing: Boolean
+    var onEdit: (id: Int) -> Unit
+    var onSave: (id: Int, title: String) -> Unit
+    var onCancel: () -> Unit
 }
 
-interface TodoItemStateProps : RProps
+interface TodoItemStateProps : RProps {
+    var todo: Todo
+}
 
 interface TodoItemDispatchProps : RProps {
     var destroy: (id: Int) -> Unit
     var toggleTodo: (Int) -> Unit
 }
 
-fun TodoItemStateProps.mapStateToProps(state: State, ownProps: OwnTodoItemPros) {
+fun TodoItemStateProps.mapStateToProps(state: State, ownProps: OwnTodoItemProps) {
+    todo = state.todos.first { it.id == ownProps.id }
 }
 
-fun TodoItemDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperAction, ownProps: OwnTodoItemPros) {
+fun TodoItemDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperAction, ownProps: OwnTodoItemProps) {
     destroy = { id: Int -> dispatch(DestroyTodoAction(id)) }
     toggleTodo = { dispatch(ToggleTodoAction(it)) }
 }
 
-val TodoItemConnector = rConnect<State, RAction, WrapperAction, OwnTodoItemPros, TodoItemStateProps, TodoItemDispatchProps, ConnectedTodoItemProps>(
+val TodoItemConnector = rConnect<State, RAction, WrapperAction, OwnTodoItemProps, TodoItemStateProps, TodoItemDispatchProps, ConnectedTodoItemProps>(
     TodoItemStateProps::mapStateToProps,
     TodoItemDispatchProps::mapDispatchToProps
 )
 val ConnectedTodoItem = TodoItemConnector(TodoItem)
 
-fun RBuilder.todoItemComponent(key: String, id: Int, todo: Todo): ReactElement = ConnectedTodoItem {
+fun RBuilder.todoItemComponent(key: String, id: Int, editing: Boolean, handler: RHandler<OwnTodoItemProps>): ReactElement = ConnectedTodoItem {
     attrs.key = key
     attrs.id = id
-    attrs.todo = todo
+    attrs.editing = editing
+    handler()
 }

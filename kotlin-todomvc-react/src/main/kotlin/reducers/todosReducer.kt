@@ -29,5 +29,14 @@ fun todosReducer(state: Array<Todo> = arrayOf(), action: RAction): Array<Todo> =
             it.apply { completed = action.checked}
         }.toTypedArray()
     }
+    is SaveTodoAction ->{
+        state.map {
+            if(it.id == action.id){
+                it.copy(title = action.text)
+            } else {
+                it.copy()
+            }
+        }.toTypedArray()
+    }
     else -> state
 }

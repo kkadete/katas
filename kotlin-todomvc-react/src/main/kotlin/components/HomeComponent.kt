@@ -1,10 +1,12 @@
 package katas.todomvc.components
 
 import react.RBuilder
+import react.RProps
 import react.dom.div
 import react.dom.section
+import react.rFunction
 
-fun RBuilder.home() =
+val Home = rFunction("HomeComponent") { _: RProps ->
     div {
         section(classes = "todoapp") {
             todoHeaderComponent()
@@ -14,3 +16,6 @@ fun RBuilder.home() =
         }
         footerComponent()
     }
+}
+
+fun RBuilder.homeComponent() = Home {}
