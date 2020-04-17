@@ -5,6 +5,7 @@ import katas.todomvc.actions.ToggleAllTodosAction
 import katas.todomvc.domain.Todo
 import katas.todomvc.domain.Visibility
 import katas.todomvc.reducers.State
+import katas.todomvc.selectors.getVisibleTodos
 import kotlinx.html.InputType
 import kotlinx.html.id
 import kotlinx.html.js.onClickFunction
@@ -22,7 +23,7 @@ import redux.WrapperAction
 val TodoList = rFunction("TodoListComponent") { props: ConnectedTodoListProps ->
     val inputRef = createRef<HTMLInputElement>()
 
-    var (editing, setEditing) = useState(2)
+    val (editing, setEditing) = useState(-1)
 
     fun handleToogleAll(event: Event): Unit {
         val target = (event.currentTarget as HTMLInputElement)
@@ -90,12 +91,6 @@ interface TodoListDispatchProps : RProps {
 fun TodoListStateProps.mapStateToProps(state: State, ownProps: OwnTodoListPros) {
     todos = getVisibleTodos(state.todos, state.visibility)
     activeTodoCount = getVisibleTodos(state.todos, Visibility.SHOW_ACTIVE).size
-}
-
-private fun getVisibleTodos(todos: Array<Todo>, filter: Visibility): Array<Todo> = when (filter) {
-    Visibility.SHOW_ALL -> todos
-    Visibility.SHOW_ACTIVE -> todos.filter { !it.completed }.toTypedArray()
-    Visibility.SHOW_COMPLETED -> todos.filter { it.completed }.toTypedArray()
 }
 
 fun TodoListDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperAction, ownProps: OwnTodoListPros) {

@@ -12,17 +12,29 @@ import kotlinx.html.js.onClickFunction
 import kotlinx.html.js.onDoubleClickFunction
 import kotlinx.html.js.onSubmitFunction
 import org.w3c.dom.events.Event
-import react.*
-import react.dom.*
+import react.RBuilder
+import react.RHandler
+import react.RProps
+import react.ReactElement
+import react.dom.button
+import react.dom.div
+import react.dom.input
+import react.dom.label
+import react.dom.li
+import react.invoke
+import react.key
+import react.rFunction
 import react.redux.rConnect
+import react.useMemo
+import react.useState
 import redux.RAction
 import redux.WrapperAction
 
 
 val TodoItem = rFunction("TodoItemComponent") { props: ConnectedTodoItemProps ->
 
-    val handleEdit: (Event) -> Unit = {
-        props.onEdit(3)
+    val handleEdit: (todoId: Int) -> Unit = {todoId ->
+        props.onEdit(todoId)
     }
 
     val handleSubmit: (Event) -> Unit = {
@@ -33,14 +45,16 @@ val TodoItem = rFunction("TodoItemComponent") { props: ConnectedTodoItemProps ->
         // TODO
     }
 
-    val handleDelete: (Event) -> Unit = { event ->
-        event.preventDefault()
-
-        props.destroy(props.id)
+    val handleDelete: (todoId: Int) -> Unit = { todoId ->
+        props.destroy(todoId)
     }
 
-    val handleToogle: (Event) -> Unit = {
-        props.toggleTodo(props.id)
+    val handleToogle: (todoId: Int) -> Unit = {todoId ->
+        props.toggleTodo(todoId)
+    }
+
+    val handleOnCancel: (todoId: Int) -> Unit = {todoId ->
+        props.onCancel()
     }
 
     var editText = useState(props.todo.title);
@@ -53,18 +67,18 @@ val TodoItem = rFunction("TodoItemComponent") { props: ConnectedTodoItemProps ->
             input(type = InputType.checkBox, classes = "toggle") {
                 attrs {
                     checked = props.todo.completed
-                    onChangeFunction = handleToogle
+                    onChangeFunction = useMemo({ { handleToogle(props.todo.id) } }, arrayOf(props.todo.id))
                 }
             }
             label {
                 attrs {
-                    onDoubleClickFunction = handleEdit
+                    onDoubleClickFunction = useMemo({ { handleEdit(props.todo.id) } }, arrayOf(props.todo.id))
                 }
                 +props.todo.title
             }
             button(classes = "destroy") {
                 attrs {
-                    onClickFunction = handleDelete
+                    onClickFunction = useMemo({ { handleDelete(props.todo.id) } }, arrayOf(props.todo.id))
                 }
             }
         }
