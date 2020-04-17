@@ -3,6 +3,7 @@ package katas.todomvc.components
 import katas.todomvc.actions.SetVisibilityFilterAction
 import katas.todomvc.domain.Visibility
 import katas.todomvc.reducers.State
+import katas.todomvc.selectors.getVisibility
 import react.*
 import react.dom.li
 import react.redux.rConnect
@@ -37,7 +38,7 @@ interface LinkDispatchProps : RProps {
 }
 
 fun LinkStateProps.mapStateToProps(state: State, ownProps: OwnLinkProps) {
-    active = state.visibility == ownProps.filter
+    active = getVisibility(state) == ownProps.filter
 }
 
 fun LinkDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperAction, ownProps: OwnLinkProps) {

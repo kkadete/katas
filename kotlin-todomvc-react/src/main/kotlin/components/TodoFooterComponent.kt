@@ -3,6 +3,8 @@ package katas.todomvc.components
 import katas.todomvc.actions.ClearCompletedTodosAction
 import katas.todomvc.domain.Visibility
 import katas.todomvc.reducers.State
+import katas.todomvc.selectors.getTodos
+import katas.todomvc.selectors.getVisibility
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import react.RBuilder
@@ -77,8 +79,8 @@ interface TodoFooterDispatchProps : RProps {
 }
 
 fun TodoFooterStateProps.mapStateToProps(state: State, ownProps: OwnTodoFooterProps) {
-    count = state.todos.size
-    completedCount = state.todos.filter { it.completed }.count()
+    count = getTodos(state).size
+    completedCount = getTodos(state).filter { it.completed }.count()
 }
 
 fun TodoFooterDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperAction, ownProps: OwnTodoFooterProps) {

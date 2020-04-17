@@ -4,6 +4,7 @@ import katas.todomvc.actions.DestroyTodoAction
 import katas.todomvc.actions.ToggleTodoAction
 import katas.todomvc.domain.Todo
 import katas.todomvc.reducers.State
+import katas.todomvc.selectors.getTodos
 import kotlinx.html.InputType
 import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
@@ -98,7 +99,7 @@ interface TodoItemDispatchProps : RProps {
 }
 
 fun TodoItemStateProps.mapStateToProps(state: State, ownProps: OwnTodoItemProps) {
-    todo = state.todos.first { it.id == ownProps.id }
+    todo = getTodos(state).first { it.id == ownProps.id }
 }
 
 fun TodoItemDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperAction, ownProps: OwnTodoItemProps) {
