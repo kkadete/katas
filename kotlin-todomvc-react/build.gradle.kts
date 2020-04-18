@@ -76,15 +76,18 @@ tasks {
     }
 }
 
+val resourcesDir = "${project.buildDir}/processedResources/Js/main"
+
 kotlin {
     sourceSets {
         all {
             languageSettings.apply {
                 apiVersion = "1.3"
                 languageVersion = "1.3"
-                enableLanguageFeature("InlineClasses")
-                useExperimentalAnnotation("kotlin.ExperimentalUnsignedTypes")
                 progressiveMode = true
+                enableLanguageFeature("InlineClasses")
+                enableLanguageFeature("NewInference")
+                useExperimentalAnnotation("kotlin.ExperimentalUnsignedTypes")
             }
         }
         named("main") {
@@ -121,8 +124,12 @@ kotlin {
                 devServer = DevServer(
                     open = true,
                     port = 3000,
-                    contentBase = listOf("$buildDir/processedResources/Js/main")
+                    contentBase = listOf(resourcesDir)
                 )
+            }
+            webpackTask {
+                sourceMaps = false
+                outputFileName = "main.bundle.js"
             }
             dceTask {
             }
