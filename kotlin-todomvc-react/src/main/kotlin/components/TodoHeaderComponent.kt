@@ -3,22 +3,28 @@ package katas.todomvc.components
 import katas.todomvc.actions.AddTodoAction
 import katas.todomvc.reducers.State
 import kotlinx.html.InputType
-import kotlinx.html.js.onSubmitFunction
+import kotlinx.html.js.onKeyDownFunction
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
-import react.*
-import react.dom.form
+import org.w3c.dom.events.KeyboardEvent
+import react.RBuilder
+import react.RProps
+import react.createRef
 import react.dom.h1
 import react.dom.header
 import react.dom.input
+import react.invoke
+import react.rFunction
 import react.redux.rConnect
 import redux.RAction
 import redux.WrapperAction
 
+const val ENTER_KEY = 13;
+
 val TodoHeader = rFunction("TodoHeaderComponent") { props: ConnectedTodoHeaderProps ->
     val inputRef = createRef<HTMLInputElement>()
 
-    val handleInput: (Event) -> Unit = { event ->
+    val submitFunction: (event: Event) -> Unit = { event ->
         event.preventDefault()
 
         inputRef.current!!.let {
@@ -29,21 +35,25 @@ val TodoHeader = rFunction("TodoHeaderComponent") { props: ConnectedTodoHeaderPr
         }
     }
 
+    val handleNewTodoKeyDown: (Event) -> Unit = { event ->
+        val keyboardEvent = event.unsafeCast<KeyboardEvent>()
+
+        if (keyboardEvent.keyCode == ENTER_KEY) {
+            submitFunction(event)
+        }
+    }
+
     header("header") {
         h1 {
             +"todos"
         }
-        form {
+        input(type = InputType.text, classes = "new-todo") {
             attrs {
-                onSubmitFunction = handleInput
+                placeholder = "What needs to be done?"
+                autoFocus = true
+                onKeyDownFunction = handleNewTodoKeyDown
             }
-            input(type = InputType.text, classes = "new-todo") {
-                attrs {
-                    placeholder = "What needs to be done?"
-                    autoFocus = true
-                }
-                ref = inputRef
-            }
+            ref = inputRef
         }
     }
 }
