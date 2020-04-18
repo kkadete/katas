@@ -7,88 +7,107 @@ import katas.todomvc.reducers.State
 import katas.todomvc.selectors.getTodos
 import kotlinx.html.InputType
 import kotlinx.html.classes
+import kotlinx.html.js.onBlurFunction
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import kotlinx.html.js.onDoubleClickFunction
-import kotlinx.html.js.onSubmitFunction
+import kotlinx.html.js.onKeyDownFunction
+import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.KeyboardEvent
 import react.RBuilder
 import react.RHandler
 import react.RProps
 import react.ReactElement
+import react.createRef
 import react.dom.button
 import react.dom.div
 import react.dom.input
 import react.dom.label
 import react.dom.li
 import react.invoke
-import react.key
 import react.rFunction
 import react.redux.rConnect
-import react.useMemo
+import react.router.dom.switch
 import react.useState
 import redux.RAction
 import redux.WrapperAction
 
+const val ESCAPE_KEY = 27
 
 val TodoItem = rFunction("TodoItemComponent") { props: ConnectedTodoItemProps ->
+    val inputRef = createRef<HTMLInputElement>()
 
-    val handleEdit: (todoId: Int) -> Unit = {todoId ->
-        props.onEdit(todoId)
+    val (editText, setEditText) = useState("");
+
+    val handleOnChange: (Event) -> Unit = {event ->
+        val target = (event.currentTarget as HTMLInputElement)
+
+        setEditText(target.value);
     }
 
-    val handleSubmit: (Event) -> Unit = {
-        // TODO
+    val handleOnEdit: (Event) -> Unit = {event ->
+        props.onEdit(props.todo.id)
+
+        setEditText(props.todo.title)
     }
 
-    val handleOnChange: (Event) -> Unit = {
-        // TODO
+    val handleOnSubmit: (Event) -> Unit = { event ->
+        val value = editText.trim()
+
+        if(!value.isEmpty()){
+            props.onSave(props.id, value)
+
+            setEditText(editText)
+        } else {
+            props.onDestroy(props.id)
+        }
     }
 
-    val handleDelete: (todoId: Int) -> Unit = { todoId ->
-        props.destroy(todoId)
-    }
+    val handleOnKeyDown: (Event) -> Unit = { event ->
+        val keyboardEvent = event.unsafeCast<KeyboardEvent>()
 
-    val handleToogle: (todoId: Int) -> Unit = {todoId ->
-        props.toggleTodo(todoId)
-    }
+        when (keyboardEvent.keyCode) {
+            ENTER_KEY -> handleOnSubmit(event)
+            ESCAPE_KEY -> {
+                setEditText(props.todo.title)
 
-    val handleOnCancel: (todoId: Int) -> Unit = {todoId ->
-        props.onCancel()
+                props.onCancel()
+            }
+        }
     }
-
-    var editText = useState(props.todo.title);
 
     li {
         attrs {
-            classes = setOf(if (props.todo.completed) "completed" else "", if (props.editing) "editing" else "")
+            classes = setOf(if (props.todo.completed) "completed" else "", if (props.isEditing) "editing" else "")
         }
         div(classes = "view") {
             input(type = InputType.checkBox, classes = "toggle") {
                 attrs {
                     checked = props.todo.completed
-                    onChangeFunction = useMemo({ { handleToogle(props.todo.id) } }, arrayOf(props.todo.id))
+                    onChangeFunction = { _: Event -> props.onToogle(props.todo.id) }
                 }
             }
             label {
                 attrs {
-                    onDoubleClickFunction = useMemo({ { handleEdit(props.todo.id) } }, arrayOf(props.todo.id))
+                    onDoubleClickFunction = handleOnEdit
                 }
                 +props.todo.title
             }
             button(classes = "destroy") {
                 attrs {
-                    onClickFunction = useMemo({ { handleDelete(props.todo.id) } }, arrayOf(props.todo.id))
+                    onClickFunction = { e: Event -> props.onDestroy(props.todo.id) }
                 }
             }
         }
         input(type = InputType.text, classes = "edit") {
             attrs {
-                value = editText.first
-                onSubmitFunction = handleSubmit
+                value = editText
+                onBlurFunction = handleOnSubmit
                 onChangeFunction = handleOnChange
+                onKeyDownFunction = handleOnKeyDown
             }
-            // ref =
+            ref = inputRef
         }
     }
 }
@@ -97,7 +116,9 @@ interface ConnectedTodoItemProps : OwnTodoItemProps, TodoItemStateProps, TodoIte
 
 interface OwnTodoItemProps : RProps {
     var id: Int
-    var editing: Boolean
+    var isEditing: Boolean
+    var onToogle: (id: Int) -> Unit
+    var onDestroy: (id: Int) -> Unit
     var onEdit: (id: Int) -> Unit
     var onSave: (id: Int, title: String) -> Unit
     var onCancel: () -> Unit
@@ -109,7 +130,6 @@ interface TodoItemStateProps : RProps {
 
 interface TodoItemDispatchProps : RProps {
     var destroy: (id: Int) -> Unit
-    var toggleTodo: (Int) -> Unit
 }
 
 fun TodoItemStateProps.mapStateToProps(state: State, ownProps: OwnTodoItemProps) {
@@ -118,7 +138,6 @@ fun TodoItemStateProps.mapStateToProps(state: State, ownProps: OwnTodoItemProps)
 
 fun TodoItemDispatchProps.mapDispatchToProps(dispatch: (RAction) -> WrapperAction, ownProps: OwnTodoItemProps) {
     destroy = { id: Int -> dispatch(DestroyTodoAction(id)) }
-    toggleTodo = { dispatch(ToggleTodoAction(it)) }
 }
 
 val TodoItemConnector = rConnect<State, RAction, WrapperAction, OwnTodoItemProps, TodoItemStateProps, TodoItemDispatchProps, ConnectedTodoItemProps>(
@@ -127,9 +146,6 @@ val TodoItemConnector = rConnect<State, RAction, WrapperAction, OwnTodoItemProps
 )
 val ConnectedTodoItem = TodoItemConnector(TodoItem)
 
-fun RBuilder.todoItemComponent(key: String, id: Int, editing: Boolean, handler: RHandler<OwnTodoItemProps>): ReactElement = ConnectedTodoItem {
-    attrs.key = key
-    attrs.id = id
-    attrs.editing = editing
+fun RBuilder.todoItemComponent(handler: RHandler<OwnTodoItemProps>): ReactElement = ConnectedTodoItem {
     handler()
 }

@@ -3,7 +3,6 @@ package katas.todomvc.components
 import katas.todomvc.reducers.State
 import katas.todomvc.selectors.getTodos
 import react.RBuilder
-import react.RHandler
 import react.RProps
 import react.dom.div
 import react.dom.section
@@ -17,7 +16,7 @@ val Home = rFunction("HomeComponent") { props: ConnectedHomeProps ->
     div {
         section(classes = "todoapp") {
             todoHeaderComponent()
-            todoListComponent()
+            todoMainComponent()
 
             if (props.hasTodos) {
                 todoFooterComponent()
