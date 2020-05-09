@@ -10,6 +10,10 @@ buildscript {
         jcenter()
     }
 
+    configurations.classpath {
+        resolutionStrategy.activateDependencyLocking()
+    }
+
     extra.set("production", (findProperty("production") ?: "false") == "true")
 }
 
@@ -29,6 +33,8 @@ repositories {
 }
 
 configurations.all {
+    resolutionStrategy.activateDependencyLocking()
+
     if (isProductionBuild) {
         resolutionStrategy {
             // TODO: different kotlin dependency versions
